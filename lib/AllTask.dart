@@ -99,7 +99,7 @@ class _AllTaskState extends State<AllTask> {
             ),
           ),
         ]),
-        
+        backgroundColor: Colors.white,
         bottomNavigationBar: BottomAppBar(
           elevation: 0,
           child: Container(
@@ -133,51 +133,10 @@ class _AllTaskState extends State<AllTask> {
             Icons.add,
             color: Colors.purple[100],
           ),
-          onPressed: () {},
+          onPressed: () {Navigator.pushNamed(context, '/addTask');},
         ),
       ),
     );
   }
-
-  Widget appbar() {
-    return Container(
-      height: 200,
-      padding: EdgeInsets.only(top: 42, bottom: 16, right: 16, left: 16),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(30),
-              bottomLeft: Radius.circular(30)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                offset: Offset(0, 3), color: Colors.black12, blurRadius: 6)
-          ]),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Hy dude',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "what your plan?",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400),
-              )
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 }
+
