@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 
+import 'package:remember/utils/dbmanager.dart';
+
+
 class AllTask extends StatefulWidget {
   @override
   _AllTaskState createState() => _AllTaskState();
 }
 
 class _AllTaskState extends State<AllTask> {
+  final DbTaskManager dbmanager = DbTaskManager();
+
+  
+  Task task;
+  List<Task> taskList;
+  int updateIndex;
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -70,8 +80,53 @@ class _AllTaskState extends State<AllTask> {
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(20),
-                  child: Text("hae"),
-                )),
+                  child: FutureBuilder(
+                    future: dbmanager.getTaskList(),
+                    builder: (context, snapshot){
+                      if (snapshot.hasData) {
+                      taskList = snapshot.data;
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: taskList == null ? 0 : taskList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            Task tsk = taskList[index];
+                            return Card(
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: width * 0.6,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          'name: ${tsk.task}',
+                                          style: TextStyle(fontSize: 15),
+                                        ),
+                                        Text(
+                                          'course: ${tsk.desc}',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    '${tsk.date}',
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ],
+                              ),
+                            );
+                        },
+                        );
+                      }
+                      return new CircularProgressIndicator();
+                    }
+                    ),
+                )
+                ),
           ),
           Padding(
             padding: EdgeInsets.all(10),
@@ -82,7 +137,7 @@ class _AllTaskState extends State<AllTask> {
               ),
               child: Padding(
                   padding: EdgeInsets.all(20),
-                  child: Text("hae"),
+                  
                 )),
             ),
           Padding(
@@ -94,7 +149,7 @@ class _AllTaskState extends State<AllTask> {
               ),
               child: Padding(
                   padding: EdgeInsets.all(20),
-                  child: Text("hae"),
+                  
                 ),
             ),
           ),
