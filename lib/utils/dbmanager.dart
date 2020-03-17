@@ -12,7 +12,7 @@ class DbTaskManager {
           join(await getDatabasesPath(), "remember.db"),
           version: 1, onCreate: (Database db, int version) async {
         await db.execute(         
-           "CREATE TABLE task(id INTEGER PRIMARY KEY autoincrement, task TEXT, desc TEXT, date TEXT)",
+           "CREATE TABLE task(id INTEGER PRIMARY KEY autoincrement, task TEXT, desc TEXT, date TEXT, done INT)",
            
             );
       } );
@@ -27,9 +27,59 @@ class DbTaskManager {
   Future<List<Task>> getTaskList() async {
     await openDb();
     final List<Map<String, dynamic>> maps = await _database.query('task');
-    return List.generate(maps.length, (i) {
+    final List<Map<String, dynamic>> temp = new List<Map<String, dynamic>>();
+
+    for(int i=0;i<maps.length;i++){
+      DateTime target = DateTime.parse(maps[i]['date']);
+      DateTime skrg = DateTime.now();
+      Duration d = target.difference(skrg);
+      if(d.inDays >= 0 && d.inDays <= 3){
+        temp.add(maps[i]);
+      }
+    }
+
+    return List.generate(temp.length, (i) {
       return Task(
-          id: maps[i]['id'], task: maps[i]['task'], desc: maps[i]['desc'], date: maps[i]['date']);
+          id: temp[i]['id'], task: temp[i]['task'], desc: temp[i]['desc'], date: temp[i]['date']);
+    });
+  }
+
+  Future<List<Task>> getTaskListMorethan3days() async {
+    await openDb();
+    final List<Map<String, dynamic>> maps = await _database.query('task');
+    final List<Map<String, dynamic>> temp = new List<Map<String, dynamic>>();
+
+    for(int i=0;i<maps.length;i++){
+      DateTime target = DateTime.parse(maps[i]['date']);
+      DateTime skrg = DateTime.now();
+      Duration d = target.difference(skrg);
+      if(d.inDays > 3 && d.inDays <= 7){
+        temp.add(maps[i]);
+      }
+    }
+
+    return List.generate(temp.length, (i) {
+      return Task(
+          id: temp[i]['id'], task: temp[i]['task'], desc: temp[i]['desc'], date: temp[i]['date']);
+    });
+  }
+
+  Future<List<Task>> getTaskListMorethan7days() async {
+    await openDb();
+    final List<Map<String, dynamic>> maps = await _database.query('task');
+    final List<Map<String, dynamic>> temp = new List<Map<String, dynamic>>();
+
+    for(int i=0;i<maps.length;i++){
+      DateTime target = DateTime.parse(maps[i]['date']);
+      DateTime skrg = DateTime.now();
+      if(target.difference(skrg).inDays > 7){
+        temp.add(maps[i]);
+      }
+    }
+
+    return List.generate(temp.length, (i) {
+        return Task(
+            id: temp[i]['id'], task: temp[i]['task'], desc: temp[i]['desc'], date: temp[i]['date']);
     });
   }
 
@@ -53,8 +103,12 @@ class Task {
   String task;
   String desc;
   String date;
-  Task({@required this.task, @required this.desc, @required this.date, this.id});
+  Task({this.task, this.desc, this.date, this.id});
+
   Map<String, dynamic> toMap() {
-    return {'task': task, 'desc': desc, 'date': date};
+    if(!desc.isEmpty)
+      return {'task': task, 'desc': desc, 'date': date};
+    else
+      return {'task': task, 'desc': '', 'date': date};
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:remember/utils/dbmanager.dart';
+import 'package:reminder/utils/dbmanager.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -15,12 +15,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final _dateController = TextEditingController();
   final _formKey = new GlobalKey<FormState>();
   Task task;
-
+  DateTime datepick;
   List<Task> taskList;
   int updateIndex;
   String selectedDate = 'Pick date';
   Future pickDate() async {
-    DateTime datepick = await showDatePicker(
+    datepick = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2010),
@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 BorderSide(color: Colors.deepPurpleAccent))),
                     controller: _nameController,
                     validator: (val) =>
-                        val.isNotEmpty ? null : 'Name Should Not Be empty',
+                        val.isNotEmpty ? null : 'Task Should Not Be empty',
                   ),
                   SizedBox(
                     height: 10.0,
@@ -81,8 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             borderSide:
                                 BorderSide(color: Colors.deepPurpleAccent))),
                     controller: _courseController,
-                    validator: (val) =>
-                        val.isNotEmpty ? null : 'Course Should Not Be empty',
+//                    validator: (val) =>
+//                        val.isNotEmpty ? null : 'Description Should Not Be empty',
                   ),
                   SizedBox(
                     height: 10.0,
@@ -120,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         )),
                     onPressed: () {
                       _submitStudent(context);
+                      //Navigator.pop(context);
                     },
                   ),
                 ],
@@ -134,15 +135,20 @@ class _MyHomePageState extends State<MyHomePage> {
   void _submitStudent(BuildContext context) {
     if (_formKey.currentState.validate()) {
       if (task == null) {
+        if(_dateController.text.isEmpty){
+          _dateController.text = DateFormat("dd-MM-yyyy").format(DateTime.now()).toString();
+          datepick = DateTime.now();
+        }
+
         Task st = new Task(
             task: _nameController.text,
             desc: _courseController.text,
-            date: _dateController.text);
+            date: datepick.toString());
         dbmanager.insertTask(st).then((id) => {
               _nameController.clear(),
               _courseController.clear(),
               _dateController.clear(),
-              print('Student Added to Db ${id}')
+              print('${datepick.toString()}')
             });
       } else {
         task.task = _nameController.text;
@@ -151,7 +157,8 @@ class _MyHomePageState extends State<MyHomePage> {
         dbmanager.updateTask(task).then((id) => {
               setState(() {
                 taskList[updateIndex].task = _nameController.text;
-                taskList[updateIndex].desc = _courseController.text;
+                if(!_courseController.text.isEmpty)
+                  taskList[updateIndex].desc = _courseController.text;
                 taskList[updateIndex].date = _dateController.text;
               }),
               _nameController.clear(),

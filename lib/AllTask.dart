@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import 'package:remember/utils/dbmanager.dart';
+import 'package:reminder/utils/dbmanager.dart';
 
 
 class AllTask extends StatefulWidget {
@@ -11,9 +12,11 @@ class AllTask extends StatefulWidget {
 class _AllTaskState extends State<AllTask> {
   final DbTaskManager dbmanager = DbTaskManager();
 
-  
+
   Task task;
   List<Task> taskList;
+  List<Task> taskList2;
+  List<Task> taskList3;
   int updateIndex;
   @override
   Widget build(BuildContext context) {
@@ -34,14 +37,14 @@ class _AllTaskState extends State<AllTask> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Hy dude',
+                    'Hey there',
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 36,
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "what your plan?",
+                    "what's your plan?",
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 14,
@@ -58,13 +61,13 @@ class _AllTaskState extends State<AllTask> {
               ),
               tabs: <Widget>[
                 Tab(
-                  text: 'Today',
+                  text: '1-3 Days',
                 ),
                 Tab(
-                  text: 'Tomorrow',
+                  text: '3-7 Days',
                 ),
                 Tab(
-                  text: 'Next 7 Days',
+                  text: '>7 Days',
                 ),
               ],
             ),
@@ -100,11 +103,12 @@ class _AllTaskState extends State<AllTask> {
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          'name: ${tsk.task}',
-                                          style: TextStyle(fontSize: 15),
+                                          '${tsk.task}',
+                                          style: TextStyle(fontSize:20,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         Text(
-                                          'course: ${tsk.desc}',
+                                          '${tsk.desc}',
                                           style: TextStyle(
                                               fontSize: 15,
                                               color: Colors.black54),
@@ -113,7 +117,7 @@ class _AllTaskState extends State<AllTask> {
                                     ),
                                   ),
                                   Text(
-                                    '${tsk.date}',
+                                    '${DateFormat("dd-MM-yyy").format(DateTime.parse(tsk.date)).toString()}',
                                     style: TextStyle(fontSize: 15),
                                   ),
                                 ],
@@ -136,8 +140,54 @@ class _AllTaskState extends State<AllTask> {
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               child: Padding(
-                  padding: EdgeInsets.all(20),
-                  
+                padding: EdgeInsets.all(20),
+                child: FutureBuilder(
+                    future: dbmanager.getTaskListMorethan3days(),
+                    builder: (context, snapshot){
+                      if (snapshot.hasData) {
+                        taskList = snapshot.data;
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: taskList == null ? 0 : taskList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            Task tsk = taskList[index];
+                            return Card(
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: width * 0.6,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          '${tsk.task}',
+                                          style: TextStyle(fontSize:20,
+                                              fontWeight: FontWeight.bold),
+
+                                        ),
+                                        Text(
+                                          '${tsk.desc}',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    '${DateFormat("dd-MM-yyy").format(DateTime.parse(tsk.date)).toString()}',
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return new CircularProgressIndicator();
+                    }
+                ),
                 )),
             ),
           Padding(
@@ -148,8 +198,54 @@ class _AllTaskState extends State<AllTask> {
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               child: Padding(
-                  padding: EdgeInsets.all(20),
-                  
+                padding: EdgeInsets.all(20),
+                child: FutureBuilder(
+                    future: dbmanager.getTaskListMorethan7days(),
+                    builder: (context, snapshot){
+                      if (snapshot.hasData) {
+                        taskList = snapshot.data;
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: taskList == null ? 0 : taskList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            Task tsk = taskList[index];
+                            return Card(
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: width * 0.6,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          '${tsk.task}',
+                                          style: TextStyle(fontSize:20,
+                                              fontWeight: FontWeight.bold),
+
+                                        ),
+                                        Text(
+                                          '${tsk.desc}',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    '${DateFormat("dd-MM-yyy").format(DateTime.parse(tsk.date)).toString()}',
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return new CircularProgressIndicator();
+                    }
+                ),
                 ),
             ),
           ),
