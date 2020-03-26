@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:reminder/utils/dbmanager.dart';
+import 'package:riminder/utils/dbmanager.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -14,22 +14,46 @@ class _MyHomePageState extends State<MyHomePage> {
   final _courseController = TextEditingController();
   final _dateController = TextEditingController();
   final _formKey = new GlobalKey<FormState>();
+
+  DateTime selectedTgl = DateTime.now();
+
+  final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
   Task task;
   DateTime datepick;
   List<Task> taskList;
   int updateIndex;
-  String selectedDate = 'Pick date';
+// Future pickDate() async {
+// datepick = await showDatePicker(
+// context: context,
+// initialDate: DateTime.now(),
+// firstDate: DateTime(2010),
+// lastDate: DateTime(2025));
+
+// if (datepick != null)
+// setState(() {
+// _dateController.text =
+// DateFormat("dd-MM-yyyy").format(datepick).toString();
+// });
+// }
   Future pickDate() async {
-    datepick = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2010),
-        lastDate: DateTime(2025));
-    if (datepick != null)
-      setState(() {
-        _dateController.text =
-            DateFormat("dd-MM-yyyy").format(datepick).toString();
-      });
+    final selectedDate = await _selectDateTime(context);
+    if (selectedDate == null) return;
+    final selectedTime = await _selectTime(context);
+    if (selectedTime == null) return;
+
+    setState(() {
+      this.selectedTgl = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      );
+      _dateController.text =
+          DateFormat('dd MMMM yyyy HH:mm').format(selectedTgl).toString();
+      print('ini adalah tanggal : ${_dateController.text}');
+      datepick = selectedTgl;
+    });
   }
 
   @override
@@ -37,9 +61,12 @@ class _MyHomePageState extends State<MyHomePage> {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text("Add New Task", style: TextStyle(color: Colors.deepPurple),)),
+        title: Center(
+            child: Text(
+          "Add New Task",
+          style: TextStyle(color: Colors.deepPurple),
+        )),
         backgroundColor: Colors.purple[100],
-        
         elevation: 0.0,
       ),
       body: ListView(
@@ -70,20 +97,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   SizedBox(
                     height: 10.0,
                   ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        labelText: 'Description',
-                        labelStyle: TextStyle(color: Colors.deepPurpleAccent),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.deepPurpleAccent))),
-                    controller: _courseController,
-//                    validator: (val) =>
-//                        val.isNotEmpty ? null : 'Description Should Not Be empty',
-                  ),
+//                   TextFormField(
+//                     decoration: InputDecoration(
+//                         border: OutlineInputBorder(
+//                             borderRadius:
+//                                 BorderRadius.all(Radius.circular(10))),
+//                         labelText: 'Description',
+//                         labelStyle: TextStyle(color: Colors.deepPurpleAccent),
+//                         focusedBorder: OutlineInputBorder(
+//                             borderSide:
+//                                 BorderSide(color: Colors.deepPurpleAccent))),
+//                     controller: _courseController,
+// // validator: (val) =>
+// // val.isNotEmpty ? null : 'Description Should Not Be empty',
+//                   ),
                   SizedBox(
                     height: 10.0,
                   ),
@@ -120,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         )),
                     onPressed: () {
                       _submitStudent(context);
-                      //Navigator.pop(context);
+//Navigator.pop(context);
                     },
                   ),
                 ],
@@ -135,31 +162,30 @@ class _MyHomePageState extends State<MyHomePage> {
   void _submitStudent(BuildContext context) {
     if (_formKey.currentState.validate()) {
       if (task == null) {
-        if(_dateController.text.isEmpty){
-          _dateController.text = DateFormat("dd-MM-yyyy").format(DateTime.now()).toString();
+        if (_dateController.text.isEmpty) {
+          _dateController.text =
+              DateFormat("dd-MM-yyyy").format(DateTime.now()).toString();
           datepick = DateTime.now();
         }
-
+        print('hasil datepick ${datepick.toString()}');
         Task st = new Task(
             task: _nameController.text,
-            desc: _courseController.text,
+            done: 0,
             date: datepick.toString());
         dbmanager.insertTask(st).then((id) => {
               _nameController.clear(),
               _courseController.clear(),
               _dateController.clear(),
-              print('${datepick.toString()}')
             });
       } else {
         task.task = _nameController.text;
-        task.desc = _courseController.text;
-
+        task.done = 0;
+        task.date = selectedTgl.toString();
         dbmanager.updateTask(task).then((id) => {
               setState(() {
                 taskList[updateIndex].task = _nameController.text;
-                if(!_courseController.text.isEmpty)
-                  taskList[updateIndex].desc = _courseController.text;
-                taskList[updateIndex].date = _dateController.text;
+                taskList[updateIndex].done = 0;
+                taskList[updateIndex].date = selectedTgl.toString();
               }),
               _nameController.clear(),
               _dateController.clear(),
@@ -170,3 +196,19 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 }
+
+Future<TimeOfDay> _selectTime(BuildContext context) {
+  final now = DateTime.now();
+
+  return showTimePicker(
+    context: context,
+    initialTime: TimeOfDay(hour: now.hour, minute: now.minute),
+  );
+}
+
+Future<DateTime> _selectDateTime(BuildContext context) => showDatePicker(
+      context: context,
+      initialDate: DateTime.now().add(Duration(seconds: 1)),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );

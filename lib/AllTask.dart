@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:reminder/utils/dbmanager.dart';
-
+import 'package:riminder/utils/dbmanager.dart';
 
 class AllTask extends StatefulWidget {
   @override
@@ -11,7 +10,6 @@ class AllTask extends StatefulWidget {
 
 class _AllTaskState extends State<AllTask> {
   final DbTaskManager dbmanager = DbTaskManager();
-
 
   Task task;
   List<Task> taskList;
@@ -74,7 +72,7 @@ class _AllTaskState extends State<AllTask> {
           ),
         ),
         body: TabBarView(children: [
-          Padding(
+          Padding( //tab1
             padding: EdgeInsets.all(10),
             child: Container(
                 decoration: BoxDecoration(
@@ -84,113 +82,131 @@ class _AllTaskState extends State<AllTask> {
                 child: Padding(
                   padding: EdgeInsets.all(20),
                   child: FutureBuilder(
-                    future: dbmanager.getTaskList(),
-                    builder: (context, snapshot){
-                      if (snapshot.hasData) {
-                      taskList = snapshot.data;
-                      return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: taskList == null ? 0 : taskList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            Task tsk = taskList[index];
-                            return Card(
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    width: width * 0.6,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '${tsk.task}',
-                                          style: TextStyle(fontSize:20,
-                                              fontWeight: FontWeight.bold),
+                      future: dbmanager.getTaskList(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          taskList = snapshot.data;
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: taskList == null ? 0 : taskList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              Task tsk = taskList[index];
+                              return Card(
+                                color: Colors.blue[100],
+                                child: Padding(
+                                  padding: EdgeInsets.all(10),
+                                 child: Row(
+                                  children: <Widget>[
+                                    
+                                    Container(
+                                        width: width * 0.6,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              '${tsk.task}',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              '${DateFormat("MMMM dd").format(DateTime.parse(tsk.date)).toString()} Jam ${DateFormat("HH:mm").format(DateTime.parse(tsk.date)).toString()}',
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.black54),
+                                            ),
+                                          ],
                                         ),
-                                        Text(
-                                          '${tsk.desc}',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black54),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Text(
-                                    '${DateFormat("dd-MM-yyy").format(DateTime.parse(tsk.date)).toString()}',
-                                    style: TextStyle(fontSize: 15),
-                                  ),
-                                ],
-                              ),
-                            );
-                        },
-                        );
-                      }
-                      return new CircularProgressIndicator();
-                    }
-                    ),
-                )
-                ),
+                                      ),
+                                   
+                                    IconButton(
+                                        icon: Icon(Icons.done),
+                                        onPressed: () {
+                                          dbmanager.updateTask(tsk).then((id)=>{
+
+                                          });
+                                          print('${tsk.done}');
+                                        })
+                                  ],
+                                ),
+                                ),
+                              );
+                            },
+                          );
+                        }
+                        return new CircularProgressIndicator();
+                      }),
+                )),
           ),
-          Padding(
+          Padding( //tab2
             padding: EdgeInsets.all(10),
             child: Container(
-              decoration: BoxDecoration(
-                color: Colors.purple[100],
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: FutureBuilder(
-                    future: dbmanager.getTaskListMorethan3days(),
-                    builder: (context, snapshot){
-                      if (snapshot.hasData) {
-                        taskList = snapshot.data;
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: taskList == null ? 0 : taskList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            Task tsk = taskList[index];
-                            return Card(
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    width: width * 0.6,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '${tsk.task}',
-                                          style: TextStyle(fontSize:20,
-                                              fontWeight: FontWeight.bold),
-
-                                        ),
-                                        Text(
-                                          '${tsk.desc}',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black54),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Text(
-                                    '${DateFormat("dd-MM-yyy").format(DateTime.parse(tsk.date)).toString()}',
-                                    style: TextStyle(fontSize: 15),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      }
-                      return new CircularProgressIndicator();
-                    }
+                decoration: BoxDecoration(
+                  color: Colors.purple[100],
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
                 ),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: FutureBuilder(
+                      future: dbmanager.getTaskListMorethan3days(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          taskList = snapshot.data;
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: taskList == null ? 0 : taskList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              Task tsk = taskList[index];
+                              return Card(
+                                color: Colors.blue[100],
+                                child: Padding(
+                                  padding: EdgeInsets.all(20),
+                                 child: Row(
+                                  children: <Widget>[
+                                    
+                                    Container(
+                                        width: width * 0.6,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              '${tsk.task}',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              '${DateFormat("MMMM dd").format(DateTime.parse(tsk.date)).toString()} Jam ${DateFormat("HH:mm").format(DateTime.parse(tsk.date)).toString()}',
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.black54),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                   
+                                    IconButton(
+                                        icon: Icon(Icons.done),
+                                        onPressed: () {
+                                          dbmanager.updateTask(tsk).then((id)=>{
+
+                                          });
+                                          print('${tsk.done}');
+                                        })
+                                  ],
+                                ),
+                                ), 
+                              );
+                            },
+                          );
+                        }
+                        return new CircularProgressIndicator();
+                      }),
                 )),
-            ),
-          Padding(
+          ),
+          Padding( //tab3
             padding: EdgeInsets.all(10),
             child: Container(
               decoration: BoxDecoration(
@@ -201,7 +217,7 @@ class _AllTaskState extends State<AllTask> {
                 padding: EdgeInsets.all(20),
                 child: FutureBuilder(
                     future: dbmanager.getTaskListMorethan7days(),
-                    builder: (context, snapshot){
+                    builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         taskList = snapshot.data;
                         return ListView.builder(
@@ -210,33 +226,32 @@ class _AllTaskState extends State<AllTask> {
                           itemBuilder: (BuildContext context, int index) {
                             Task tsk = taskList[index];
                             return Card(
+                              color: Colors.blue[100],
                               child: Row(
                                 children: <Widget>[
                                   Container(
                                     width: width * 0.6,
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
                                           '${tsk.task}',
-                                          style: TextStyle(fontSize:20,
+                                          style: TextStyle(
+                                              fontSize: 20,
                                               fontWeight: FontWeight.bold),
-
                                         ),
                                         Text(
-                                          '${tsk.desc}',
+                                          '${DateFormat("MMMM dd").format(DateTime.parse(tsk.date)).toString()} Jam ${DateFormat("HH:mm").format(DateTime.parse(tsk.date)).toString()}',
                                           style: TextStyle(
-                                              fontSize: 15,
+                                              fontSize: 10,
                                               color: Colors.black54),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  Text(
-                                    '${DateFormat("dd-MM-yyy").format(DateTime.parse(tsk.date)).toString()}',
-                                    style: TextStyle(fontSize: 15),
-                                  ),
+                                  IconButton(
+                                      icon: Icon(Icons.done), onPressed: () {})
                                 ],
                               ),
                             );
@@ -244,9 +259,8 @@ class _AllTaskState extends State<AllTask> {
                         );
                       }
                       return new CircularProgressIndicator();
-                    }
-                ),
-                ),
+                    }),
+              ),
             ),
           ),
         ]),
@@ -264,12 +278,17 @@ class _AllTaskState extends State<AllTask> {
                     Icons.archive,
                     size: 30,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/archive');
+                  },
                 ),
                 Spacer(),
                 IconButton(
                   color: Colors.blue[300],
-                  icon: Icon(Icons.calendar_today, size: 30,),
+                  icon: Icon(
+                    Icons.exit_to_app,
+                    size: 30,
+                  ),
                   onPressed: () {},
                 ),
                 SizedBox(width: 30.0),
@@ -284,10 +303,11 @@ class _AllTaskState extends State<AllTask> {
             Icons.add,
             color: Colors.purple[100],
           ),
-          onPressed: () {Navigator.pushNamed(context, '/addTask');},
+          onPressed: () {
+            Navigator.pushNamed(context, '/addTask');
+          },
         ),
       ),
     );
   }
 }
-
