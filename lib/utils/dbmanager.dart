@@ -59,7 +59,7 @@ class DbTaskManager {
       DateTime target = DateTime.parse(maps[i]['date']);
       DateTime skrg = DateTime.now();
       Duration d = target.difference(skrg);
-      if(d.inDays > 3 && d.inDays <= 7 &&maps[i][task.done] == 1){
+      if(d.inDays > 3 && d.inDays <= 7 ){
         temp.add(maps[i]);
       }
     }
@@ -80,7 +80,7 @@ class DbTaskManager {
     for(int i=0;i<maps.length;i++){
       DateTime target = DateTime.parse(maps[i]['date']);
       DateTime skrg = DateTime.now();
-      if(target.difference(skrg).inDays > 7 && maps[i][task.done] == 1){
+      if(target.difference(skrg).inDays > 7 ){
         temp.add(maps[i]);
       }
     }
