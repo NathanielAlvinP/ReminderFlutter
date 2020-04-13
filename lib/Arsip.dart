@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:riminder/utils/dbmanager.dart';
+import 'utils/dbmanager.dart';
 
 class MyArchive extends StatefulWidget {
   @override

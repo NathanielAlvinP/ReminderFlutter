@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
-import 'package:riminder/utils/dbmanager.dart';
+import 'package:pertemuan06/AllTask.dart';
+import 'utils/dbmanager.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -9,6 +11,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final DbTaskManager dbmanager = new DbTaskManager();
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static var counter=0;
 
   final _nameController = TextEditingController();
   final _courseController = TextEditingController();
@@ -22,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   DateTime datepick;
   List<Task> taskList;
   int updateIndex;
+
 // Future pickDate() async {
 // datepick = await showDatePicker(
 // context: context,
@@ -97,19 +103,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   SizedBox(
                     height: 10.0,
                   ),
-//                   TextFormField(
-//                     decoration: InputDecoration(
-//                         border: OutlineInputBorder(
-//                             borderRadius:
-//                                 BorderRadius.all(Radius.circular(10))),
-//                         labelText: 'Description',
-//                         labelStyle: TextStyle(color: Colors.deepPurpleAccent),
-//                         focusedBorder: OutlineInputBorder(
-//                             borderSide:
-//                                 BorderSide(color: Colors.deepPurpleAccent))),
-//                     controller: _courseController,
-// // validator: (val) =>
-// // val.isNotEmpty ? null : 'Description Should Not Be empty',
 //                   ),
                   SizedBox(
                     height: 10.0,
@@ -147,7 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         )),
                     onPressed: () {
                       _submitStudent(context);
-//Navigator.pop(context);
+                      showNotification();
+                      Navigator.pop(context);
                     },
                   ),
                 ],
@@ -195,7 +189,44 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
   }
+
+  showNotification() async {
+    var android = AndroidNotificationDetails(
+        'channel id',
+        'channel name',
+        'channel description',
+        priority: Priority.High,
+        importance: Importance.Max,
+        ticker: 'duar'
+    );
+    var iOS = IOSNotificationDetails();
+    var platform = NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.schedule(counter, 'Don\'t forget', '${_nameController.text}', datepick, platform);
+    counter++;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var iOS = IOSInitializationSettings();
+    var initSettings = InitializationSettings(android, iOS);
+    flutterLocalNotificationsPlugin.initialize(initSettings,
+        onSelectNotification: selectNotification);
+  }
+
+  Future selectNotification(String payload) async{
+    if(payload != null){
+      debugPrint('Payload: $payload');
+    }
+//    await Navigator.push(
+//      context,
+//      new MaterialPageRoute(builder: (context) => new AllTask())
+//    );
+  }
 }
+
 
 Future<TimeOfDay> _selectTime(BuildContext context) {
   final now = DateTime.now();

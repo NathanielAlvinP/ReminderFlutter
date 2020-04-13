@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-//import 'package:reminder/AddTask.dart';
-import 'package:riminder/AllTask.dart';
-import 'package:riminder/Arsip.dart';
-//import 'package:reminder/models/task.dart';
-import 'package:riminder/tambahTask.dart';
+
+import 'AllTask.dart';
+import 'Arsip.dart';
+import 'tambahTask.dart';
+
 
 
 void main() => runApp(MyApp());

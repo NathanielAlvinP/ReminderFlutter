@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:riminder/utils/dbmanager.dart';
+import 'utils/dbmanager.dart';
+
 
 class AllTask extends StatefulWidget {
   @override
@@ -161,15 +162,15 @@ class _AllTaskState extends State<AllTask> {
                               return Card(
                                 color: Colors.blue[100],
                                 child: Padding(
-                                  padding: EdgeInsets.all(20),
-                                 child: Row(
-                                  children: <Widget>[
-                                    
-                                    Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: Row(
+                                    children: <Widget>[
+
+                                      Container(
                                         width: width * 0.6,
                                         child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
                                               '${tsk.task}',
@@ -186,18 +187,19 @@ class _AllTaskState extends State<AllTask> {
                                           ],
                                         ),
                                       ),
-                                   
-                                    IconButton(
-                                        icon: Icon(Icons.done),
-                                        onPressed: () {
-                                          dbmanager.updateTask(tsk).then((id)=>{
 
-                                          });
-                                          print('${tsk.done}');
-                                        })
-                                  ],
+                                      IconButton(
+                                          icon: Icon(Icons.done),
+                                          onPressed: () {
+                                            dbmanager.updateTask(tsk).then((id)=>{
+
+                                            });
+
+                                            print('${tsk.done}');
+                                          })
+                                    ],
+                                  ),
                                 ),
-                                ), 
                               );
                             },
                           );
@@ -227,32 +229,43 @@ class _AllTaskState extends State<AllTask> {
                             Task tsk = taskList[index];
                             return Card(
                               color: Colors.blue[100],
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    width: width * 0.6,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '${tsk.task}',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          '${DateFormat("MMMM dd").format(DateTime.parse(tsk.date)).toString()} Jam ${DateFormat("HH:mm").format(DateTime.parse(tsk.date)).toString()}',
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.black54),
-                                        ),
-                                      ],
+                              child: Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  children: <Widget>[
+
+                                    Container(
+                                      width: width * 0.6,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            '${tsk.task}',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            '${DateFormat("MMMM dd").format(DateTime.parse(tsk.date)).toString()} Jam ${DateFormat("HH:mm").format(DateTime.parse(tsk.date)).toString()}',
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.black54),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  IconButton(
-                                      icon: Icon(Icons.done), onPressed: () {})
-                                ],
+
+                                    IconButton(
+                                        icon: Icon(Icons.done),
+                                        onPressed: () {
+                                          dbmanager.updateTask(tsk).then((id)=>{
+
+                                          });
+                                          print('${tsk.done}');
+                                        })
+                                  ],
+                                ),
                               ),
                             );
                           },
