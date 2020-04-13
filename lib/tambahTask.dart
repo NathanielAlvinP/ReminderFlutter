@@ -69,9 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Center(
             child: Text(
-          "Add New Task",
-          style: TextStyle(color: Colors.deepPurple),
-        )),
+              "Add New Task",
+              style: TextStyle(color: Colors.deepPurple),
+            )),
         backgroundColor: Colors.purple[100],
         elevation: 0.0,
       ),
@@ -90,15 +90,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
+                            BorderRadius.all(Radius.circular(10))),
                         labelText: 'Enter your task',
                         labelStyle: TextStyle(color: Colors.deepPurpleAccent),
                         focusedBorder: OutlineInputBorder(
                             borderSide:
-                                BorderSide(color: Colors.deepPurpleAccent))),
+                            BorderSide(color: Colors.deepPurpleAccent))),
                     controller: _nameController,
                     validator: (val) =>
-                        val.isNotEmpty ? null : 'Task Should Not Be empty',
+                    val.isNotEmpty ? null : 'Task Should Not Be empty',
                   ),
                   SizedBox(
                     height: 10.0,
@@ -167,25 +167,25 @@ class _MyHomePageState extends State<MyHomePage> {
             done: 0,
             date: datepick.toString());
         dbmanager.insertTask(st).then((id) => {
-              _nameController.clear(),
-              _courseController.clear(),
-              _dateController.clear(),
-            });
+          _nameController.clear(),
+          _courseController.clear(),
+          _dateController.clear(),
+        });
       } else {
         task.task = _nameController.text;
         task.done = 0;
         task.date = selectedTgl.toString();
         dbmanager.updateTask(task).then((id) => {
-              setState(() {
-                taskList[updateIndex].task = _nameController.text;
-                taskList[updateIndex].done = 0;
-                taskList[updateIndex].date = selectedTgl.toString();
-              }),
-              _nameController.clear(),
-              _dateController.clear(),
-              _courseController.clear(),
-              task = null
-            });
+          setState(() {
+            taskList[updateIndex].task = _nameController.text;
+            taskList[updateIndex].done = 0;
+            taskList[updateIndex].date = selectedTgl.toString();
+          }),
+          _nameController.clear(),
+          _dateController.clear(),
+          _courseController.clear(),
+          task = null
+        });
       }
     }
   }
@@ -238,8 +238,8 @@ Future<TimeOfDay> _selectTime(BuildContext context) {
 }
 
 Future<DateTime> _selectDateTime(BuildContext context) => showDatePicker(
-      context: context,
-      initialDate: DateTime.now().add(Duration(seconds: 1)),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
+  context: context,
+  initialDate: DateTime.now().add(Duration(seconds: 1)),
+  firstDate: DateTime.now(),
+  lastDate: DateTime(2100),
+);
